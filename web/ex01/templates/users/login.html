@@ -1,0 +1,65 @@
+<div class="my-5">
+    <h1 class="text-center mb-5">{{title}}</h1>
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <div class="card">
+                <div class="car-body p-5">
+                    <form name="frm">
+                        <input class="form-control mb-3" name="uid" placeholder="아이디">
+                        <input class="form-control mb-3" name="upass" type="password" placeholder="비밀번호">
+                        <button class="w-100 btn btn-dark">로그인</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(frm).on("submit", function (e) {
+        e.preventDefault();
+        const uid = $(frm.uid).val();
+        const upass = $(frm.upass).val();
+        if (uid == "" || upass == "") {
+            Swal.fire({
+                title: "로그인 에러",
+                text: "아이디와 비밀번호를 입력하세요!",
+                icon: "error"
+            });
+            return;
+        }
+
+        // 로그인 체크
+        $.ajax({
+            type: "post",
+            url: "/users/login",
+            data: JSON.stringify({ uid, upass }),
+            success: function (data) {
+                if (data == 1) {
+                    Swal.fire({
+                        title: "로그인 성공",
+                        text: "",
+                        icon: "success"
+                    }).then(() => {
+                        sessionStorage.setItem('uid', uid)
+                        location.href = '/';
+                    })
+                } else if (data == 2) {
+                    Swal.fire({
+                        title: "로그인 에러",
+                        text: "비밀번호가 일치하지 않습니다!",
+                        icon: "error"
+                    });
+                    return;
+                } else {
+                    Swal.fire({
+                        title: "로그인 에러",
+                        text: "아이디가 존재하지 않습니다!",
+                        icon: "error"
+                    });
+                    return;
+                }
+            }
+        });
+    });
+</script>

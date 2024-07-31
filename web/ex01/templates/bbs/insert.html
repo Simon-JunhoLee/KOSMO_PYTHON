@@ -1,0 +1,49 @@
+<div class="my-5">
+    <h1 class="text-center mb-5">{{title}}</h1>
+    <div class="px-5">
+        <form name="frm">
+            <input class="form-control mb-2" name="title" placeholder="제목을 입력하세요.">
+            <textarea class="form-control" name="contents" rows="10" placeholder="내용을 입력하세요."></textarea>
+            <div class="text-center mt-3">
+                <button class="btn btn-dark px-5">등록</button>
+                <button class="btn btn-secondary px-5" type="reset">취소</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(frm).on("submit", function (e) {
+        e.preventDefault();
+        const title = $(frm.title).val();
+        const contents = $(frm.contents).val();
+
+        if (title == "") {
+            Swal.fire({
+                title: "제목을 입력하세요!",
+                text: "",
+                icon: "warning"
+            });
+            $(frm.title).focus();
+            return;
+        }
+
+        // 게시글 등록
+        $.ajax({
+            type: "post",
+            url: "/bbs/insert",
+            data: JSON.stringify({ title, contents, uid }),
+            success: function (data) {
+                if (data == "success") {
+                    location.href = "/bbs"
+                } else {
+                    Swal.fire({
+                        title: "글쓰기 실패",
+                        text: "",
+                        icon: "error"
+                    });
+                }
+            }
+        })
+    })
+</script>

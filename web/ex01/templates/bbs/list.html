@@ -1,0 +1,54 @@
+<div class="text-center my-5">
+    <h1>{{title}}</h1>
+    <div class="text-end">
+        <a href="/bbs/insert" class="btn btn-dark" id="insert">글쓰기</a>
+    </div>
+    <div id="div_list" class="mt-3"></div>
+    {%raw%}
+    <script id="temp_list" type="x-handlebars-template">
+        <table class="table">
+            <tr>
+                <th>no.</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>작성날짜</th>
+            </tr>
+            {{#each .}}
+                <tr>
+                    <td>{{bid}}</td>
+                    <td class="bbs_read" data-bid="{{bid}}" style="cursor:pointer;">{{title}}</td>
+                    <td>{{uname}}({{writer}})</td>
+                    <td>{{fmtDate}}</td>
+                </tr>
+            {{/each}}
+        </table>
+    </script>
+    {%endraw%}
+</div>
+
+<script>
+    getList();
+    function getList() {
+        $.ajax({
+            type: "get",
+            url: "/bbs/list.json",
+            success: function (data) {
+                // console.log(data);
+                const temp = Handlebars.compile($("#temp_list").html());
+                $("#div_list").html(temp(data));
+            }
+        });
+    }
+
+    if(uid) {
+        $("#insert").show();
+    }else {
+        $("#insert").hide();
+    }
+
+    $("#div_list").on("click", ".bbs_read", function(e){
+        e.preventDefault();
+        const bid = $(this).data("bid");
+        location.href="/bbs/"+bid;
+    })
+</script>

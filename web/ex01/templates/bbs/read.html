@@ -1,0 +1,59 @@
+<div class="my-5">
+    <h1 class="text-center mb-5">{{title}}</h1>
+    <div class="text-end mx-5 mb-3" id="update">
+        <button class="btn btn-outline-dark me-2 px-3 update">수정</button>
+        <button class="btn btn-outline-secondary px-3 delete">삭제</button>
+    </div>
+    <div class="card mx-5">
+        <div class="card-body">
+            <h5 class="px-3">{{bbs.title}}</h5>
+            <hr>
+            <div style="white-space:pre-wrap;" class="px-3">{{bbs.contents}}</div>
+        </div>
+        <div class="card-footer text-muted py-3 text-end px-3">
+            <span style="color: blue; font-size:18px;"></span>
+            Posted by {{bbs.uname}}({{bbs.writer}}) on {{bbs.fmtDate}}
+        </div>
+    </div>
+</div>
+
+<script>
+    const writer = "{{bbs.writer}}";
+    if (writer == uid) {
+        $("#update").show();
+    } else {
+        $("#update").hide();
+    }
+
+    $(".delete").on("click", function () {
+        const bid = "{{bbs.bid}}";
+        Swal.fire({
+            title: `${bid}번 게시글을 삭제하시겠습니까?`,
+            text: "",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "black",
+            cancelButtonColor: "gray",
+            confirmButtonText: "Confirm"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "delete",
+                    url: `/bbs/${bid}`,
+                    success: function (data) {
+                        if (data == "success") {
+                            Swal.fire({
+                                title: "삭제 성공",
+                                text: "",
+                                icon: "success"
+                            }).then(() => {
+                                sessionStorage.setItem('uid', uid)
+                                location.href = '/bbs';
+                            })
+                        }
+                    }
+                });
+            }
+        });
+    })
+</script>
